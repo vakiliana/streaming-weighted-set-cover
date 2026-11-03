@@ -1,0 +1,90 @@
+Lean (version 4.19.0, x86_64-unknown-linux-gnu, commit 6caaee842e94, Release)
+✔ [6699/6700] Built SetCover
+Build completed successfully.
+Audited 559 public SetCover declarations transitively: only propext, Classical.choice, Quot.sound.
+'SetCover.manuscript_lemma22' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SetCover.Paper.main_theorem' depends on axioms: [propext, Classical.choice, Quot.sound]
+SetCover.manuscript_lemma22 : SetCover.ManuscriptLemma22
+def SetCover.ManuscriptLemma22 : Prop :=
+∃ C₀,
+  0 < C₀ ∧
+    ∀ (M v : ℕ → ℕ) (α : ℕ → ℝ),
+      (∀ᶠ (k : ℕ) in Filter.atTop,
+          1 ≤ α k ∧ C₀ * ↑k ^ 2 ≤ ↑(M k) ∧ 6 * α k * Real.exp (27 * α k) * ↑k * Real.log (2 * ↑(M k) + 1) ≤ ↑(v k)) →
+        ((fun k => ↑(v k)) =o[Filter.atTop] fun k => ↑k ^ 2) →
+          ∀ᶠ (k : ℕ) in Filter.atTop, SetCover.Lemma22Conclusion k (M k) (v k)
+def SetCover.Lemma22Conclusion : ℕ → ℕ → ℕ → Prop :=
+fun k M v =>
+  (∀ (A : SetCover.CheapMatrix v M),
+      SetCover.IsProbability (SetCover.noiseMass k A) ∧
+        ∀ (z : SetCover.Cube v), SetCover.noiseMass k A z ≠ 0 → SetCover.Repairable k A z) ∧
+    9 / 10 ≤ SetCover.eventMass (SetCover.matrixMass k) (SetCover.Good k)
+def SetCover.Good : {v M : ℕ} → ℕ → SetCover.CheapMatrix v M → Prop :=
+fun {v M} k A => SetCover.Covers A ∧ SetCover.DensityCertificate k A
+def SetCover.DensityCertificate : {v M : ℕ} → ℕ → SetCover.CheapMatrix v M → Prop :=
+fun {v M} k A =>
+  ∀ (f g : SetCover.Cube v → ℝ),
+    SetCover.IsDensity f →
+      SetCover.IsDensity g →
+        1 - (SetCover.lambda k M + Real.exp (-↑(SetCover.effectiveDimension k v) / 120)) -
+            120 / ↑(SetCover.effectiveDimension k v) * (SetCover.entropy f + SetCover.entropy g) ≤
+          SetCover.pairing (SetCover.noiseMass k A) f g
+FULL LEMMA STATUS: PROVED. All moment and asymptotic obligations are discharged.
+SetCover.Paper.main_theorem.{u} : SetCover.Paper.ManuscriptMainTheorem
+def SetCover.Paper.ManuscriptMainTheorem.{u} : Prop :=
+∃ C₀ c,
+  0 < C₀ ∧
+    0 < c ∧
+      ∀ (M v : ℕ → ℕ) (α : ℕ → ℝ),
+        (∀ᶠ (k : ℕ) in Filter.atTop,
+            1 ≤ α k ∧ C₀ * ↑k ^ 2 ≤ ↑(M k) ∧ 6 * α k * Real.exp (27 * α k) * ↑k * Real.log (2 * ↑(M k) + 1) ≤ ↑(v k)) →
+          ((fun k => ↑(v k)) =o[Filter.atTop] fun k => ↑k ^ 2) →
+            ∀ᶠ (k : ℕ) in Filter.atTop, SetCover.Paper.MainConclusion c k (M k) (v k) (α k)
+def SetCover.Paper.MainConclusion.{u} : ℝ → ℕ → ℕ → ℕ → ℝ → Prop :=
+fun c k M v α =>
+  let r := M / 2;
+  let s := M - r;
+  ∃ (hs : 0 < s),
+    ∃ A,
+      ∃ (hA : SetCover.Covers A),
+        ∀ (p S : ℕ),
+          0 < p →
+            ∀ (Ω : Type u) [inst : MeasurableSpace Ω] (μ : MeasureTheory.Measure Ω)
+              [inst_1 : MeasureTheory.IsProbabilityMeasure μ] (code : Ω → SetCover.Paper.FullMachine p S v M r s ℝ),
+              (SetCover.Paper.SeedMeasurable fun ω =>
+                  SetCover.Paper.thresholdMachine (3 * α * ↑k) ((code ω).withKnownCheap k A hs)) →
+                SetCover.Paper.EstimatesFull μ code k A hA hs α → c * ↑(2 * M) * ↑k ^ 2 / ↑(2 * v) ≤ ↑p * ↑S
+def SetCover.Paper.EstimatesFull.{u} : {Ω : Type u} →
+  [inst : MeasurableSpace Ω] →
+    {p S v M r s : ℕ} →
+      MeasureTheory.Measure Ω →
+        (Ω → SetCover.Paper.FullMachine p S v M r s ℝ) →
+          ℕ → (A : SetCover.CheapMatrix v M) → SetCover.Covers A → 0 < s → ℝ → Prop :=
+fun {Ω} [MeasurableSpace Ω] {p S v M r s} μ code k A hA hs α =>
+  ∀ (x : SetCover.Paper.Input v r s),
+    2 / 3 ≤
+      μ.real
+        {ω |
+          ↑(SetCover.Paper.optimum k A x hA) ≤ (code ω).run k A hs x ∧
+            (code ω).run k A hs x ≤ α * ↑(SetCover.Paper.optimum k A x hA)}
+def SetCover.Paper.SeedMeasurable.{u_1, u_2} : {Ω : Type u_1} →
+  {B : Type u_2} → [inst : MeasurableSpace Ω] → (Ω → B) → Prop :=
+fun {Ω} {B} [MeasurableSpace Ω] code => ∀ (b : B), MeasurableSet {ω | code ω = b}
+SetCover.Paper.optimum_spec {v M r s : ℕ} (k : ℕ) (A : SetCover.CheapMatrix v M) (x : SetCover.Paper.Input v r s)
+  (hA : SetCover.Covers A) :
+  ∃ F, SetCover.Paper.IsCover A x F ∧ SetCover.Paper.cost k F = SetCover.Paper.optimum k A x hA
+SetCover.Paper.optimum_le_cost {v M r s k : ℕ} {A : SetCover.CheapMatrix v M} {x : SetCover.Paper.Input v r s}
+  (hA : SetCover.Covers A) {F : Finset (SetCover.Paper.SetId M r s)} (hF : SetCover.Paper.IsCover A x F) :
+  SetCover.Paper.optimum k A x hA ≤ SetCover.Paper.cost k F
+SetCover.Paper.universe_card (v : ℕ) : Fintype.card (SetCover.Paper.Element v) = 2 * v
+SetCover.Paper.set_family_card {M r s : ℕ} (h : r + s = M) : Fintype.card (SetCover.Paper.SetId M r s) = 2 * M
+SetCover.Paper.FullMachine.knownCheap_run.{u_1} {p S v M r s : ℕ} {Out : Type u_1}
+  (m : SetCover.Paper.FullMachine p S v M r s Out) (k : ℕ) (A : SetCover.CheapMatrix v M) (hs : 0 < s)
+  (x : SetCover.Paper.Input v r s) : (m.withKnownCheap k A hs).run x = m.run k A hs x
+SetCover.Paper.StreamingMachine.protocol_run.{u_1} {p S v r s : ℕ} {Out : Type u_1}
+  (m : SetCover.Paper.StreamingMachine p S v r s Out) (decideOutput : Out → Bool) (x : SetCover.Paper.Input v r s) :
+  (m.protocol decideOutput).run x.1 x.2 = decideOutput (m.run x)
+SetCover.Paper.StreamingMachine.protocol_depth.{u_1} {p S v r s : ℕ} {Out : Type u_1}
+  (m : SetCover.Paper.StreamingMachine p S v r s Out) (decideOutput : Out → Bool) :
+  (m.protocol decideOutput).depth ≤ 2 * p * S + 1
+MAIN THEOREM STATUS: PROVED. No unproved cover-gap, rectangle, entropy, or simulation hypotheses.
