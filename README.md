@@ -1,4 +1,4 @@
-# Version 17: Lean verification
+# Nearly linear lower bound for streaming weighted set cover: Lean verification
 
 **The main theorem is now proved**, including its hard-instance,
 communication, and streaming-reduction dependencies:
