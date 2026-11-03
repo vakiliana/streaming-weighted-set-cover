@@ -1,6 +1,6 @@
 # Streaming weighted set cover requires nearly linear space, in Lean
 
-[![Lean build](https://github.com/vakiliana/<repo>/actions/workflows/lean.yml/badge.svg?branch=main)](https://github.com/vakiliana/<repo>/actions/workflows/lean.yml)
+[![Lean build](https://github.com/vakiliana/streaming-weighted-set-cover/actions/workflows/lean.yml/badge.svg?branch=main)](https://github.com/vakiliana/streaming-weighted-set-cover/actions/workflows/lean.yml)
 
 In streaming set cover, $m$ sets over an $n$-element universe arrive one at a time with integer weights, the algorithm makes $p$ passes over the stream with $S$ bits of memory, and the goal is to approximate the minimum weight of a cover. The unweighted problem is well understood — for fixed $\delta \in (0,1)$, $O(1/\delta)$ passes and $\widetilde{O}(n + mn^{\delta})$ space suffice for an $O(1/\delta)$-approximation — and across computational models, weighted and unweighted set cover usually have similar complexity.
 
